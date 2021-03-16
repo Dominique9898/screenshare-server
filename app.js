@@ -36,24 +36,18 @@ io.on('connection', (socket) => {
     rooms[remoteCode].number = 1
     callback(remoteCode)
     socket.join(remoteCode);
-    socket.broadcast.to(remoteCode).emit('new-user-connect', userId);
-    socket.on('disconnect', () => {
-      socket.broadcast.to(remoteCode).emit('user-disconnected', userId);
-    });
-    console.log('创建房间号', remoteCode, 'rooms:', rooms)
+    console.log(userId,'创建房间号', remoteCode, 'rooms:', rooms)
   })
 
-  socket.on(DELETE_REMOTE_CODE, (remoteCode) => {
+  socket.on(DELETE_REMOTE_CODE, (remoteCode, userId) => {
+    // 用户断开连接
     delete(rooms[remoteCode])
-    console.log('取消投屏房间号', remoteCode, 'rooms:', rooms)
+    socket.emit(DELETE_REMOTE_CODE, userId)
+    console.log(userId, '取消投屏房间号', remoteCode, 'rooms:', rooms)
   })
 
   socket.on(ENTER_REMOTE_ROOM, (remoteCode,  userId) => {
     socket.join(remoteCode)
-    socket.broadcast.to(remoteCode).emit('new-user-connect', userId);
-    socket.on('disconnect', () => {
-      socket.broadcast.to(remoteCode).emit('user-disconnected', userId);
-    });
     if(rooms.hasOwnProperty(remoteCode)) {
       rooms[remoteCode].number++
       console.log(userId + ' 加入Roon:' + remoteCode, '总人数', rooms[remoteCode].number)
