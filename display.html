@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Display</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+</body>
+<script>
+let remoteCode = '';
+let user = {};
+const host = 'http://localhost';
+
+window.onload = () => {
+  remoteCode = prompt('Enter RemoteCode:')
+  const socket = io.connect()
+  user.remoteCode = remoteCode
+  user.userId = ''
+  socket.emit('enter-remote-room', user, (newUser) => {
+    console.log('USER_JOINED', newUser)
+  })
+}
+</script>
+</html>
