@@ -23,8 +23,7 @@ app.get('/display', (res, req) => {
   req.sendFile(__dirname + '/' + 'display.html')
 })
 
-// const rooms = {}
-const rooms = ['123456']
+const offers = {}
 
 io.on('connection', (socket) => {
   console.log('connection')
@@ -56,10 +55,16 @@ io.on('connection', (socket) => {
 
   socket.on(SCREEN_SEND_OFFER, (remoteCode, offer) => {
     console.log('Server 收到屏幕端的offer')
-    socket.broadcast.to(remoteCode).emit(SCREEN_OFFER_TO_CLIENT,offer);
+    offers[remoteCode] = offer
   })
+
   socket.on(CLIENT_ANSWER_TO_SCREEN, (remoteCode, answer) => {
-    console.log('Server 收到answer', answer)
-    socket.broadcast.to(remoteCode).emit(CLIENT_ANSWER_TO_SCREEN, remoteCode, answer);
+    console.log('Server 收到客户端的answer')
+    socket.broadcast.to(remoteCode).emit(CLIENT_ANSWER_TO_SCREEN, answer);
+  });
+  socket.on(SCREEN_OFFER_TO_CLIENT, (remoteCode, cb) => {
+    // findOffer 寻找remoteCode相同的offer
+    const offer = offers[remoteCode]
+    cb(offer)
   });
 })

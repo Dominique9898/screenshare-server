@@ -6,20 +6,46 @@
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
+<video id="video"></video>
 </body>
 <script>
 let remoteCode = '';
 let user = {};
 const host = 'http://localhost';
-
+const configuration = {
+  iceServers: [
+    {
+      urls: 'turn:121.4.130.218:3478',
+      username: 'dominik',
+      credential: '19989813wei.',
+    },
+  ],
+  iceCandidatePoolSize: 2,
+};
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
   const socket = io.connect()
   user.remoteCode = remoteCode
   user.userId = ''
-  socket.emit('enter-remote-room', user, (newUser) => {
-    console.log('USER_JOINED', newUser)
+  socket.emit('enter-remote-room', user, () => {
+    console.log('USER_JOINED')
   })
+  const pc = new RTCPeerConnection(configuration);
+  socket.on('screen-offer-to-client', async (data) => {
+    console.log('screen-offer-to-client');
+    if (data.offer) {
+      pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+      // 是呼叫方的Offer，放Remote
+      // 创建Answer，并保存为Local
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      // 利用信令回复Answer
+      socket.emit('client-answer-to-screen', answer);
+    }
+  });
+  pc.onaddstream = (event) => {
+    document.getElementById('video').srcObject = event.stream;
+  };
 }
 </script>
 </html>
