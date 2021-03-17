@@ -8,10 +8,14 @@ http.listen(3000, function(){
   console.log('http listening on *:3000');
 });
 const randomize = require('randomatic');
-const LEAVE_REMOTE_ROOM = 'leave-remote-room';
 const ENTER_REMOTE_ROOM = 'enter-remote-room';
-const SEND_OFFERSDP = 'send-offersdp';
+const LEAVE_REMOTE_ROOM = 'leave-remote-room';
+const SCREEN_SEND_OFFER = 'screen-send-offer';
 const USER_JOINED = 'user-joined';
+const EXCHANGE_CANDIDATE = 'exchange-candidate';
+const SCREEN_ANSWER_TO_CLIENT = 'screen-answer-to-client';
+const CLIENT_OFFER_TO_SCREEM = 'client-offer-to-screem';
+
 app.get('/', (res, req) => {
   req.redirect('/display')
 })
@@ -50,7 +54,7 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on(SEND_OFFERSDP, (remoteCode, desc) => {
-    console.log(remoteCode, desc)
+  socket.on(SCREEN_SEND_OFFER, (offer) => {
+    console.log('SCREEN_SEND_OFFER', offer)
   })
 })
