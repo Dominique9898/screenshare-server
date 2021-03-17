@@ -13,8 +13,8 @@ const LEAVE_REMOTE_ROOM = 'leave-remote-room';
 const SCREEN_SEND_OFFER = 'screen-send-offer';
 const USER_JOINED = 'user-joined';
 const EXCHANGE_CANDIDATE = 'exchange-candidate';
-const SCREEN_ANSWER_TO_CLIENT = 'screen-answer-to-client';
-const CLIENT_OFFER_TO_SCREEM = 'client-offer-to-screem';
+const SCREEN_OFFER_TO_CLIENT = 'screen-offer-to-client';
+const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
 
 app.get('/', (res, req) => {
   req.redirect('/display')
@@ -54,7 +54,12 @@ io.on('connection', (socket) => {
     }
   })
 
-  socket.on(SCREEN_SEND_OFFER, (offer) => {
-    console.log('SCREEN_SEND_OFFER', offer)
+  socket.on(SCREEN_SEND_OFFER, (remoteCode, offer) => {
+    console.log('Server 收到屏幕端的offer')
+    socket.broadcast.to(remoteCode).emit(SCREEN_OFFER_TO_CLIENT,offer);
   })
+  socket.on(CLIENT_ANSWER_TO_SCREEN, (remoteCode, answer) => {
+    console.log('Server 收到answer', answer)
+    socket.broadcast.to(remoteCode).emit(CLIENT_ANSWER_TO_SCREEN, remoteCode, answer);
+  });
 })
