@@ -14,7 +14,8 @@ const SCREEN_SEND_OFFER = 'screen-send-offer';
 const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
 const GET_ANSWER = 'get-answer';
 const GET_OFFER = 'get-offer';
-
+const SCREEN_TO_CLIENT_CANDIDATE = 'screen-to-client-candidate';
+const CLIENT_TO_SCREEN_CANDIDATE = 'client-to-screen-candidate';
 app.get('/', (res, req) => {
   req.redirect('/display')
 })
@@ -77,6 +78,13 @@ io.on('connection', (socket) => {
 
   socket.on(CLIENT_ANSWER_TO_SCREEN, (remoteCode, answer) => {
     console.log('Server: get answer', remoteCode)
-    socket.broadcast.to(remoteCode).emit(GET_ANSWER, answer)
+    socket.broadcast.to(remoteCode).emit(GET_ANSWER, remoteCode, answer)
+  });
+
+  socket.on(SCREEN_TO_CLIENT_CANDIDATE, (remoteCode, candidate) => {
+    socket.broadcast.to(remoteCode).emit(SCREEN_TO_CLIENT_CANDIDATE, remoteCode, candidate)
+  });
+  socket.on(CLIENT_TO_SCREEN_CANDIDATE, (remoteCode, candidate) => {
+    socket.broadcast.to(remoteCode).emit(CLIENT_TO_SCREEN_CANDIDATE, remoteCode, candidate)
   });
 })
