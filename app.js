@@ -11,10 +11,9 @@ const randomize = require('randomatic');
 const ENTER_REMOTE_ROOM = 'enter-remote-room';
 const LEAVE_REMOTE_ROOM = 'leave-remote-room';
 const SCREEN_SEND_OFFER = 'screen-send-offer';
-const USER_JOINED = 'user-joined';
-const EXCHANGE_CANDIDATE = 'exchange-candidate';
-const SCREEN_OFFER_TO_CLIENT = 'screen-offer-to-client';
 const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
+const GET_ANSWER = 'get-answer';
+const GET_OFFER = 'get-offer';
 
 app.get('/', (res, req) => {
   req.redirect('/display')
@@ -24,19 +23,37 @@ app.get('/display', (res, req) => {
 })
 
 const offers = {}
+const candidates = {}
+const rooms = {
+
+}
 
 io.on('connection', (socket) => {
   console.log('connection')
 
   socket.on(ENTER_REMOTE_ROOM, (user, cb) => {
+    const room = rooms[user.remoteCode]
+    const uNumbers = room ? room.number : 0;
     if (user.userId === '') {
       user.userId = randomize('Aa0', 6)
       user.created = Date.now();
     }
-    user.status = 'connected';
-    socket.join(user.remoteCode);
-    socket.to(user.remoteCode).emit(USER_JOINED, user)
-    console.log(`server: ${user.userId} enter room:${user.remoteCode}`);
+    if (!uNumbers) {
+      user.status = 'connected';
+      rooms[user.remoteCode] = {}
+      rooms[user.remoteCode].number = 1
+      socket.join(user.remoteCode);
+      console.log(`server: ${user.userId} create room`);
+    } else if (uNumbers > 2) {
+      socket.emit('full', room, socket.id);
+      console.log(`server: full`);
+    } else {
+      user.status = 'connected';
+      rooms[user.remoteCode].number++
+      socket.join(user.remoteCode);
+      socket.broadcast.to(user.remoteCode).emit(ENTER_REMOTE_ROOM);
+      console.log(`server: ${user.userId} enter room: ${user.remoteCode}`);
+    }
     if (cb) {
       cb(user)
     }
@@ -54,17 +71,12 @@ io.on('connection', (socket) => {
   })
 
   socket.on(SCREEN_SEND_OFFER, (remoteCode, offer) => {
-    console.log('Server 收到屏幕端的offer')
-    offers[remoteCode] = offer
+    console.log('Server: get offer')
+    socket.broadcast.to(remoteCode).emit(GET_OFFER, remoteCode, offer)
   })
 
   socket.on(CLIENT_ANSWER_TO_SCREEN, (remoteCode, answer) => {
-    console.log('Server 收到客户端的answer')
-    socket.broadcast.to(remoteCode).emit(CLIENT_ANSWER_TO_SCREEN, answer);
-  });
-  socket.on(SCREEN_OFFER_TO_CLIENT, (remoteCode, cb) => {
-    // findOffer 寻找remoteCode相同的offer
-    const offer = offers[remoteCode]
-    cb(offer)
+    console.log('Server: get answer', remoteCode)
+    socket.broadcast.to(remoteCode).emit(GET_ANSWER, answer)
   });
 })

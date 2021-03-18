@@ -22,6 +22,15 @@ const configuration = {
   ],
   iceCandidatePoolSize: 2,
 };
+const ENTER_REMOTE_ROOM = 'enter-remote-room';
+const LEAVE_REMOTE_ROOM = 'leave-remote-room';
+const SCREEN_SEND_OFFER = 'screen-send-offer';
+const USER_JOINED = 'user-joined';
+const EXCHANGE_CANDIDATE = 'exchange-candidate';
+const SCREEN_OFFER_TO_CLIENT = 'screen-offer-to-client';
+const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
+const SEND_SCREEN_CANDIDATE = 'send-screen-candidate';
+const SEND_CLIENT_CANDIDATE = 'send-client-candidate';
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
   const socket = io.connect()
@@ -30,22 +39,7 @@ window.onload = () => {
   socket.emit('enter-remote-room', user, () => {
     console.log('USER_JOINED')
   })
-  const pc = new RTCPeerConnection(configuration);
-  socket.on('screen-offer-to-client', async (data) => {
-    console.log('screen-offer-to-client');
-    if (data.offer) {
-      pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-      // 是呼叫方的Offer，放Remote
-      // 创建Answer，并保存为Local
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      // 利用信令回复Answer
-      socket.emit('client-answer-to-screen', answer);
-    }
-  });
-  pc.onaddstream = (event) => {
-    document.getElementById('video').srcObject = event.stream;
-  };
+
 }
 </script>
 </html>
