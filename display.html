@@ -54,7 +54,6 @@ window.onload = () => {
       document.getElementById('remoteVideo').srcObject = event.stream;
       console.warn('client: onstream', document.getElementById('remoteVideo'));
     };
-    console.log('peerClient', peerClient);
     peerClient.onconnectionstatechange = () => {
       console.log(
         'RTC Connection State Change :',
@@ -63,6 +62,7 @@ window.onload = () => {
     };
     peerClient.onicecandidate = (e) => {
       if (e.candidate) {
+        console.log('client: create candidate', e.candidate);
         socket.emit(CLIENT_TO_SCREEN_CANDIDATE, remoteCode, e.candidate);
       }
     };
