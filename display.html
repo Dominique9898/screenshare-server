@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="sharedScreen">
-    <video muted id="remoteVideo" class="video" autoplay="autoplay" controls="controls"></video>
+    <video muted id="remoteVideo" class="video" autoplay="autoplay" playsinline></video>
 </div>
 </body>
 <script>
@@ -34,6 +34,7 @@ const configuration = {
 const GET_OFFER = 'get-offer';
 const SCREEN_TO_CLIENT_CANDIDATE = 'screen-to-client-candidate';
 const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
+const CLIENT_TO_SCREEN_CANDIDATE = 'client-to-screen-candidate';
 
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
@@ -57,6 +58,11 @@ window.onload = () => {
         'RTC Connection State Change :',
         peerClient.connectionState,
       );
+    };
+    peerClient.onicecandidate = (e) => {
+      if (e.candidate) {
+        socket.emit(CLIENT_TO_SCREEN_CANDIDATE, remoteCode, e.candidate);
+      }
     };
     await peerClient.setRemoteDescription(new RTCSessionDescription(offer));
     const answer = await peerClient.createAnswer();
