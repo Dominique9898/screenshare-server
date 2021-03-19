@@ -13,7 +13,7 @@
 </head>
 <body>
 <div class="sharedScreen">
-    <video muted id="remoteVideo" class="video" autoplay="autoplay"></video>
+    <video muted id="remoteVideo" class="video" autoplay="autoplay" controls="controls"></video>
 </div>
 </body>
 <script>
@@ -47,7 +47,9 @@ window.onload = () => {
     console.log('client:get offer: ', remoteCode, offer);
     peerClient = createPeerConnection();
     peerClient.onaddstream = (event) => {
-      document.getElementById('remoteVideo').srcObject = event.stream;
+      const video = document.getElementById('remoteVideo')
+      video.srcObject = event.stream;
+      video.play()
       console.warn('client: onstream', event.stream);
     };
     peerClient.onconnectionstatechange = () => {
