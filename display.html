@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <title>Display</title>
     <script src="/socket.io/socket.io.js"></script>
+    <style>
+        .video {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
-<video id="video"></video>
+<div class="sharedScreen">
+    <video muted id="remoteVideo" class="video" autoplay="autoplay"></video>
+</div>
 </body>
 <script>
 let remoteCode = '';
 let user = {};
+let peerClient = null;
 const host = 'http://localhost';
 const configuration = {
   iceServers: [
@@ -22,24 +31,61 @@ const configuration = {
   ],
   iceCandidatePoolSize: 2,
 };
-const ENTER_REMOTE_ROOM = 'enter-remote-room';
-const LEAVE_REMOTE_ROOM = 'leave-remote-room';
-const SCREEN_SEND_OFFER = 'screen-send-offer';
-const USER_JOINED = 'user-joined';
-const EXCHANGE_CANDIDATE = 'exchange-candidate';
-const SCREEN_OFFER_TO_CLIENT = 'screen-offer-to-client';
+const GET_OFFER = 'get-offer';
+const SCREEN_TO_CLIENT_CANDIDATE = 'screen-to-client-candidate';
 const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
-const SEND_SCREEN_CANDIDATE = 'send-screen-candidate';
-const SEND_CLIENT_CANDIDATE = 'send-client-candidate';
+
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
   const socket = io.connect()
   user.remoteCode = remoteCode
-  user.userId = ''
-  socket.emit('enter-remote-room', user, () => {
-    console.log('USER_JOINED')
-  })
+  user.userId = '123'
+  socket.emit('enter-remote-room', user)
 
+  socket.on(GET_OFFER, async (remoteCode, offer) => {
+    // peerClient收到offer
+    console.log('client:get offer: ', remoteCode, offer);
+    peerClient = createPeerConnection();
+    peerClient.onaddstream = (event) => {
+      document.getElementById('remoteVideo').srcObject = event.stream;
+      console.warn('client: onstream', event.stream);
+    };
+    peerClient.onconnectionstatechange = () => {
+      console.log(
+        'RTC Connection State Change :',
+        peerClient.connectionState,
+      );
+    };
+    await peerClient.setRemoteDescription(new RTCSessionDescription(offer));
+    const answer = await peerClient.createAnswer();
+    await peerClient.setLocalDescription(answer);
+    console.log('client:send answer: ', answer);
+    socket.emit(CLIENT_ANSWER_TO_SCREEN, remoteCode, answer);
+  })
+  socket.on(SCREEN_TO_CLIENT_CANDIDATE, async (remoteCode, candidate) => {
+    if (candidate) {
+      console.log('client: get screen ice:', remoteCode, candidate);
+      await peerClient.addIceCandidate(candidate);
+    }
+  });
+  const createPeerConnection = () => {
+    const configuration = {
+      iceServers: [
+        {
+          urls: 'stun:121.4.130.218:3478',
+          username: 'dominik',
+          credential: '19989813wei.',
+        },
+        {
+          urls: 'turn:121.4.130.218:3478',
+          username: 'dominik',
+          credential: '19989813wei.',
+        },
+      ],
+      iceCandidatePoolSize: 2,
+    };
+    return new RTCPeerConnection(configuration);
+  }
 }
 </script>
 </html>
