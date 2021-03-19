@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Display</title>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <style>
         .video {
             width: 100%;
@@ -20,7 +20,6 @@
 let remoteCode = '';
 let user = {};
 let peerClient = null;
-const host = 'http://localhost';
 const configuration = {
   iceServers: [
     {
