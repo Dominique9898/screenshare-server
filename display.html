@@ -45,13 +45,13 @@ window.onload = () => {
 
   socket.on(GET_OFFER, async (remoteCode, offer) => {
     // peerClient收到offer
-    console.log('client:get offer: ', remoteCode, offer);
-    peerClient = createPeerConnection();
+    console.log('client:get offer: ', offer);
+    peerClient = new RTCPeerConnection(configuration);
     peerClient.onaddstream = (event) => {
-      const video = document.getElementById('remoteVideo')
-      video.srcObject = event.stream;
-      console.warn('client: onstream', event.stream);
+      document.getElementById('remoteVideo').srcObject = event.stream;
+      console.warn('client: onstream', document.getElementById('remoteVideo'));
     };
+    console.log('peerClient', peerClient);
     peerClient.onconnectionstatechange = () => {
       console.log(
         'RTC Connection State Change :',
@@ -68,7 +68,7 @@ window.onload = () => {
     await peerClient.setLocalDescription(answer);
     console.log('client:send answer: ', answer);
     socket.emit(CLIENT_ANSWER_TO_SCREEN, remoteCode, answer);
-  })
+  });
   socket.on(SCREEN_TO_CLIENT_CANDIDATE, async (remoteCode, candidate) => {
     if (candidate) {
       console.log('client: get screen ice:', remoteCode, candidate);

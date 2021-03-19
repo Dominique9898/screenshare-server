@@ -82,9 +82,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on(SCREEN_TO_CLIENT_CANDIDATE, (remoteCode, candidate) => {
+    console.log('Server: get screen ice', candidate)
     socket.broadcast.to(remoteCode).emit(SCREEN_TO_CLIENT_CANDIDATE, remoteCode, candidate)
   });
   socket.on(CLIENT_TO_SCREEN_CANDIDATE, (remoteCode, candidate) => {
+    console.log('Server: get client ice', candidate)
     socket.broadcast.to(remoteCode).emit(CLIENT_TO_SCREEN_CANDIDATE, remoteCode, candidate)
   });
 })
