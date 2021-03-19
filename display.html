@@ -24,12 +24,16 @@ const host = 'http://localhost';
 const configuration = {
   iceServers: [
     {
+      urls: 'stun:121.4.130.218:3478',
+      username: 'dominik',
+      credential: '19989813wei.',
+    },
+    {
       urls: 'turn:121.4.130.218:3478',
       username: 'dominik',
       credential: '19989813wei.',
     },
   ],
-  iceCandidatePoolSize: 2,
 };
 const GET_OFFER = 'get-offer';
 const SCREEN_TO_CLIENT_CANDIDATE = 'screen-to-client-candidate';
@@ -75,24 +79,6 @@ window.onload = () => {
       await peerClient.addIceCandidate(candidate);
     }
   });
-  const createPeerConnection = () => {
-    const configuration = {
-      iceServers: [
-        {
-          urls: 'stun:121.4.130.218:3478',
-          username: 'dominik',
-          credential: '19989813wei.',
-        },
-        {
-          urls: 'turn:121.4.130.218:3478',
-          username: 'dominik',
-          credential: '19989813wei.',
-        },
-      ],
-      iceCandidatePoolSize: 2,
-    };
-    return new RTCPeerConnection(configuration);
-  }
 }
 </script>
 </html>
