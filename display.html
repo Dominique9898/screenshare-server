@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Display</title>
-    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <style>
         .video {
             width: 100%;
@@ -41,7 +41,7 @@ const CLIENT_TO_SCREEN_CANDIDATE = 'client-to-screen-candidate';
 
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
-  const socket = io.connect('http://localhost')
+  const socket = io.connect()
   user.remoteCode = remoteCode
   user.userId = '123'
   socket.emit('enter-remote-room', user)
