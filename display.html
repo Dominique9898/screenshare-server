@@ -41,7 +41,7 @@ const CLIENT_TO_SCREEN_CANDIDATE = 'client-to-screen-candidate';
 
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
-  const socket = io.connect()
+  const socket = io('http://localhost');
   user.remoteCode = remoteCode
   user.userId = '123'
   socket.emit('enter-remote-room', user)

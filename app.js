@@ -7,6 +7,7 @@ const io = require('socket.io')(http)
 http.listen(3000, function(){
   console.log('http listening on *:3000');
 });
+
 const randomize = require('randomatic');
 const ENTER_REMOTE_ROOM = 'enter-remote-room';
 const LEAVE_REMOTE_ROOM = 'leave-remote-room';
