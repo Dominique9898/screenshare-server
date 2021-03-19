@@ -50,7 +50,6 @@ window.onload = () => {
     peerClient.onaddstream = (event) => {
       const video = document.getElementById('remoteVideo')
       video.srcObject = event.stream;
-      video.play()
       console.warn('client: onstream', event.stream);
     };
     peerClient.onconnectionstatechange = () => {
