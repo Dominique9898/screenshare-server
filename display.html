@@ -38,10 +38,10 @@ const GET_OFFER = 'get-offer';
 const SCREEN_TO_CLIENT_CANDIDATE = 'screen-to-client-candidate';
 const CLIENT_ANSWER_TO_SCREEN = 'client-answer-to-screen';
 const CLIENT_TO_SCREEN_CANDIDATE = 'client-to-screen-candidate';
+const socket = io('ws://121.4.130.218:3000');
 
 window.onload = () => {
   remoteCode = prompt('Enter RemoteCode:')
-  const socket = io('http://localhost');
   user.remoteCode = remoteCode
   user.userId = '123'
   socket.emit('enter-remote-room', user)

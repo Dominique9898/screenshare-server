@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="3cc98f54-16d6-4121-8bfc-33427ae4357c" name="dominikcloud" url="http://dominikcloud.ltd">
+        <fileTransfer rootFolder="/root" accessType="SFTP" host="dominikcloud.ltd" port="22" sshConfigId="019ba5f6-7c49-4cef-bcb0-7a05fcfd07b4" sshConfig="root@dominikcloud.ltd:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
