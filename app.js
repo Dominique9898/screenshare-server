@@ -1,5 +1,4 @@
 const express = require('express')
-const path = require('path')
 const app = express()
 let http = require('http').Server(app)
 const io = require('socket.io')(http)
@@ -9,14 +8,19 @@ http.listen(3000, function(){
 });
 
 const randomize = require('randomatic');
+
 const ENTER_REMOTE_ROOM = 'enter-remote-room';
 const LEAVE_REMOTE_ROOM = 'leave-remote-room';
+
 const SCREEN_SEND_SCREEN_OFFER = 'screen-send-screen-offer';
 const SCREEN_SEND_VIDEO_OFFER = 'screen-send-video-offer';
+
 const CLIENT_SCREEN_ANSWER_TO_SCREEN = 'client-screen-answer-to-screen';
 const CLIENT_VIDEO_ANSWER_TO_SCREEN = 'client-video-answer-to-screen';
+
 const GET_SCREEN_ANSWER = 'get-screen-answer';
 const GET_VIDEO_ANSWER = 'get-video-answer';
+
 const GET_SCREEN_OFFER = 'get-screen-offer';
 const GET_VIDEO_OFFER = 'get-video-offer';
 
@@ -24,7 +28,8 @@ const SCREEN_TO_CLIENT_SCREEN_CANDIDATE = 'screen-to-client-screen-candidate';
 const SCREEN_TO_CLIENT_VIDEO_CANDIDATE = 'screen-to-client-video-candidate';
 
 const CLIENT_TO_SCREEN_SCREEN_CANDIDATE = 'client-to-screen-screen-candidate';
-const CLIENT_TO_SCREEN_VIDEO_CANDIDATE = 'client-to-screen-video-candidate';app.get('/', (res, req) => {
+const CLIENT_TO_SCREEN_VIDEO_CANDIDATE = 'client-to-screen-video-candidate';
+app.get('/', (res, req) => {
   req.redirect('/display')
 })
 app.get('/display', (res, req) => {
@@ -45,9 +50,7 @@ app.all("*",function(req,res,next){
 
 const offers = {}
 const candidates = {}
-const rooms = {
-
-}
+const rooms = {}
 
 io.on('connection', (socket) => {
   console.log('connection')
